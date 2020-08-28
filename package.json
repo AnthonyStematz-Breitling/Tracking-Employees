@@ -1,0 +1,23 @@
+{
+  "name": "tracking-employees",
+  "version": "1.0.0",
+  "description": "creates the npm for a content management system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnthonyStematz-Breitling/Tracking-Employees.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AnthonyStematz-Breitling/Tracking-Employees/issues"
+  },
+  "homepage": "https://github.com/AnthonyStematz-Breitling/Tracking-Employees#readme",
+  "dependencies": {
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1"
+  }
+}
