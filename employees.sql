@@ -6,18 +6,18 @@ CREATE TABLE department(
     name VARCHAR(30) NOT NULL,
     PRIMARY KEY (id)
 )
+
 CREATE TABLE position(
     id INTEGER AUTO_INCREMENT NOT NULL,
     title VARCHAR(30) NOT NULL,
+    --salary 
     PRIMARY KEY (id)
 )
 
-CREATE TABLE employees (
+CREATE TABLE employees(
     id INTEGER AUTO_INCREMENT NOT NULL,
     firstname VARCHAR(25) NOT NULL,
     lastname VARCHAR(35) NOT NULL,
     PRIMARY KEY (id)
-
-
 )
 
