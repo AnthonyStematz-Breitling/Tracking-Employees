@@ -1,4 +1,5 @@
-const inquirer = require("inquirer")
+const inquirer = require("inquirer");
+const { createPromptModule } = require("inquirer");
 
 function initiate(){
 inquirer.prompt(
@@ -27,28 +28,37 @@ inquirer.prompt(
 function choice(data){
     switch(data){
         case "Create Employee":
+            createEmployee()
         break;
 
         case "Create Role":
+            createRole()
         break;
 
         case "Create Department":
+            createDepartment()
         break;
 
         case "View All Employees":
+            viewEmployees()
         break;
 
         case "View Employees by Department":
+            viewByDepartment()
         break;
 
         case "View Employees by Role":
+            viewByRole()
         break;
 
         case "Change an Employees Role":
+            changeRole()
         break;
     }
 
 }
+
+
 
 
 //Create is going to have a second inquirer prompt and an INSERT mysql function

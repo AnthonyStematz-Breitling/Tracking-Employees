@@ -10,7 +10,8 @@ CREATE TABLE department(
 CREATE TABLE position(
     id INTEGER AUTO_INCREMENT NOT NULL,
     title VARCHAR(30) NOT NULL,
-    --salary 
+    salary DECIMAL(10,2),
+    department_id INT NOT NULL,
     PRIMARY KEY (id)
 )
 
@@ -18,6 +19,8 @@ CREATE TABLE employees(
     id INTEGER AUTO_INCREMENT NOT NULL,
     firstname VARCHAR(25) NOT NULL,
     lastname VARCHAR(35) NOT NULL,
+    role_id  INT NOT NULL,
+    manager_id INT,
     PRIMARY KEY (id)
 )
 
