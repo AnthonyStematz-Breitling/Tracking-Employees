@@ -58,6 +58,50 @@ function choice(data){
 
 }
 
+function createEmployee(){
+    inquirer.prompt(
+        { 
+            type:"input",
+            message:"First Name?",
+            name:"firstName"
+        },
+        {
+            type:"input",
+            message: "Last Name?",
+            name: "lastName"
+        },
+        //department id
+        //role id
+    )
+}
+
+function createDepartment(){
+    inquirer.prompt(
+        {
+            type: "input",
+            message: "Name of the Deparment?",
+            name:"departmentName"
+        }
+    )
+}
+
+function createRole(){
+    inquirer.prompt(
+        {
+            type: "input",
+            message: "Role Title?",
+            name: "roleTitle"
+        },
+        {
+            type: "input",
+            message: "What is the salary of this Role?",
+            name: "roleSalary"
+        },
+        //add some error handling to make sure salary input is a number
+        //department id
+    )
+}
+
 
 
 
