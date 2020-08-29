@@ -12,7 +12,7 @@ CREATE TABLE role(
     id INTEGER AUTO_INCREMENT NOT NULL,
     title VARCHAR(30) NOT NULL,
     salary DECIMAL(10,2),
-    department_id INT NOT NULL,
+    department_id INT,
     PRIMARY KEY (id)
 );
 
@@ -25,3 +25,4 @@ CREATE TABLE employees(
     PRIMARY KEY (id)
 );
 
+--look up FOREIGN KEYS for role_id, manager_id, and department_id
