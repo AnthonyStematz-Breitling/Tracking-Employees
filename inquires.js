@@ -61,7 +61,14 @@ function choice(data){
 
 
 
-//Create is going to have a second inquirer prompt and an INSERT mysql function
-//View is going to select certain parts of the table and then present those parts
-//Change is going to find an employee by unique id and then change the chosen column as desired
-//Delete is going to find a row by unique id and then remove that row 
+//Create is going to have a second inquirer prompt 
+//and an INSERT mysql function
+
+//View is going to have a second inquirer prompt
+//and use that input to select certain parts of the table and then present those parts
+
+//Change is going to have a second inquirer prompt
+//and find an employee by unique id and then change the chosen column as desired
+
+//Delete is going to have a second inquirer prompt
+//and use that input to select a row by unique id and then remove that row 
