@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
-const { createPromptModule } = require("inquirer");
+//const console = require("console.table")
+
 
 function initiate(){
 inquirer.prompt(
@@ -102,6 +103,36 @@ function createRole(){
     )
 }
 
+function viewEmployees(){
+    //console.table(employees)
+    //look up how to use console.table wiht SQL
+}
+
+function viewByDepartment(){
+    //get departments from database
+
+    inquirer.prompt(
+        {
+            type: "list",
+            message: "" //list of departments from DB
+        }
+    )
+    //may need a switch statement 
+    //then show all employees from that department
+}
+
+function viewByRole(){
+    //get roles from database
+
+    inquirer.prompt(
+        {
+            type: "list",
+            message: "" //list all roles from DB
+        }
+    )
+    //made need a switch statement
+    //thne show all employees with that role
+}
 
 
 
