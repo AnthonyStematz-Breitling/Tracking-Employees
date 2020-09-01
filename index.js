@@ -92,6 +92,7 @@ async function createEmployee(){
     const roleList = roleRows.map(role =>{ 
         return {name: role.title, value: role.id}
     })
+    console.log(roleList)
 
     const {firstName, lastName, roleId} = await inquirer.prompt(
        [ { 
@@ -114,28 +115,32 @@ async function createEmployee(){
 
     //     }
     
-        //role id
         //manager id
    await connection.query("INSERT INTO employees SET ? ", {
        firstname: firstName, lastname:lastName, role_id:roleId})
    initiate()
 }
 
-function createDepartment(){
-    inquirer.prompt(
+async function createDepartment(){
+   const {departmentName} = await inquirer.prompt(
         {
             type: "input",
             message: "Name of the Deparment?",
             name:"departmentName"
         }
     )
-    //insert into database
+    await connection.query("INSERT INTO department SET ? ", {name: departmentName})
     initiate()
 }
 
-function createRole(){
-    inquirer.prompt(
-        {
+async function createRole(){
+    const departmentRows = await connection.query("SELECT * FROM  department")
+
+    const departmentList = departmentRows.map(department =>{ 
+        return {name: department.name, value: department.id}
+    })
+   const {roleTitle, roleSalary, departmentId} = await inquirer.prompt(
+       [ {
             type: "input",
             message: "Role Title?",
             name: "roleTitle"
@@ -145,16 +150,21 @@ function createRole(){
             message: "What is the salary of this Role?",
             name: "roleSalary"
         },
+        {
+            type: "list",
+            message: "choose a department",
+            choices: departmentList,
+            name: "departmentId"
+        }
         //add some error handling to make sure salary input is a number
-        //department id
-    )
-    //insert query
+    ])
+    await connection.query("INSERT INTO role SET ? ", 
+    {title: roleTitle, salary: roleSalary, department_id: departmentId})
+    
     initiate()
 }
 
 async function viewEmployees(){
-    //console.table(employees)
-    //look up how to use console.table wiht SQL
     const employeeRows = await connection.query("SELECT * FROM  employees")
     console.table(employeeRows)
    initiate()
