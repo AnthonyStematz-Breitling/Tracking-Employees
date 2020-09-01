@@ -49,7 +49,6 @@ const answers = await inquirer.prompt([
 choice(answers.adminFunctions)
 }
 
-//function with switch statement
 async function choice(data){
     switch(data){
         case "Create Employee":
@@ -92,9 +91,15 @@ async function createEmployee(){
     const roleList = roleRows.map(role =>{ 
         return {name: role.title, value: role.id}
     })
-    console.log(roleList)
 
-    const {firstName, lastName, roleId} = await inquirer.prompt(
+    const employeeRows = await connection.query("SELECT * FROM  employees")
+
+    const employeeList = employeeRows.map(employees =>{ 
+        return {name: employees.firstname + " " + employees.lastname, value: employees.id}
+    })
+
+
+    const {firstName, lastName, roleId, managerId} = await inquirer.prompt(
        [ { 
             type:"input",
             message:"First Name?",
@@ -110,14 +115,16 @@ async function createEmployee(){
         message: "What is the employee's Role?",
         choices:roleList, 
         name: "roleId"
-    }])
-    //    {
-
-    //     }
-    
-        //manager id
+    },
+    { 
+        type:"list",
+        message: "Who is thier manager?",
+        choices: employeeList,
+        name: "managerId"
+    }
+])
    await connection.query("INSERT INTO employees SET ? ", {
-       firstname: firstName, lastname:lastName, role_id:roleId})
+       firstname: firstName, lastname:lastName, role_id:roleId, manager_id:managerId})
    initiate()
 }
 
@@ -139,6 +146,7 @@ async function createRole(){
     const departmentList = departmentRows.map(department =>{ 
         return {name: department.name, value: department.id}
     })
+
    const {roleTitle, roleSalary, departmentId} = await inquirer.prompt(
        [ {
             type: "input",
@@ -171,60 +179,76 @@ async function viewEmployees(){
 
 }
 
-function viewByDepartment(){
-    //get departments from database
+async function viewByDepartment(){
+    const departmentRows = await connection.query("SELECT * FROM  department")
 
-    inquirer.prompt(
+    const departmentList = departmentRows.map(department =>{ 
+        return {name: department.name, value: department.id}
+    })
+
+    const{departmentId} = await inquirer.prompt(
         {
             type: "list",
-            message: "" //list of departments from DB
+            message: "choose department",
+            choices: departmentList,
+            name: "departmentId" 
         }
     ) 
-    //then show all employees from that department
+    initiate()
+   
 }
 
-function viewByRole(){
-    //get roles from database
+async function viewByRole(){
+    const roleRows = await connection.query("SELECT * FROM  role")
 
-    inquirer.prompt(
+    const roleList = roleRows.map(role =>{ 
+        return {name: role.title, value: role.id}
+    })
+   
+
+    const {roleId} = await inquirer.prompt(
         {
             type: "list",
-            message: "" //list all roles from DB
+            message: "pick a role",
+            choices: roleList,
+            name:"roleId"
         }
     )
-    //may need a switch statement
+    connection.query("SELECT firstname, lastname FROM employees INNER JOIN role ON employees.role_id = ?", {roleId} )
     //then show all employees with that role
 }
 
-function changeRole(){
+async function changeRole(){
+    const roleRows = await connection.query("SELECT * FROM  role")
+
+    const roleList = roleRows.map(role =>{ 
+        return {name: role.title, value: role.id}
+    })
     
-    inquirer.prompt(
-        [{
-            type: "input",
-            message: "What is the first name of the employee?",
-            name: "changeFirst" 
-        },
-        {
-            type: "input",
-            message: "What is the last name of the employee?",
-            name: "changeLast"
-        },
-        //get all employees with that first and last name from DB
-        //create an error message if there is no matching employee
+    const employeeRows = await connection.query("SELECT * FROM  employees")
+
+    const employeeList = employeeRows.map(employees =>{ 
+        return {name: employees.firstname + " " + employees.lastname, value: employees.id}
+    })
+
+    const {chosenEmployee, newRole} = await inquirer.prompt(
+        [
         {
             type: "list",
-            message: "", //list of employees with that first and last name 
-            //including thier unique id & current role
+            message: "choose employee", 
+            choices: employeeList,
             name: "chosenEmployee"
         },
-        console.log("What role would you like the employee to have?"),
         {
             type: "list",
-            message: "", //list of roles from database
+            message: "choose new role",
+            choices: roleList, 
             name: "newRole"
         }
     ])
+    await connection.query("UPDATE employees SET ?", {role_id:newRole})
     //using the newRole change the role of the chosen employee in the DB
+    initiate()
 }
 
 
