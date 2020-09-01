@@ -1,6 +1,8 @@
 const inquirer = require("inquirer");
-//const console = require("console.table")
+const consoleTable = require("console.table")
+const util = require("util");
 var mysql = require("mysql");
+
 var connection = mysql.createConnection({
     host: "localhost",
   
@@ -8,17 +10,20 @@ var connection = mysql.createConnection({
   
     user: "root",
   
-    password: "",
-    database: "work-force_db"
+    password: "MyNewPass",
+    database: "work_force_db"
   });
-
+  
+  connection.query = util.promisify(connection.query)
   connection.connect(function(err) {
     if (err) throw err;
-    console.log("connected as id " + connection.threadId);
+    initiate() 
   });
 
-function initiate(){
-inquirer.prompt([
+
+
+async function initiate(){
+const answers = await inquirer.prompt([
     {
         type:"list",
         name: "adminFunctions",
@@ -34,19 +39,21 @@ inquirer.prompt([
             "View Employees by Department", 
             "View Employees by Role", 
             //"View Employees by Manager",
-            "Change an Employees Role" 
-            //"Change an Employees Manager", 
+            "Change an Employees Role" ,
+            //"Change an Employees Manager",
+            "Done" 
         ]
     }
 
 ])
+choice(answers.adminFunctions)
 }
 
 //function with switch statement
-function choice(data){
+async function choice(data){
     switch(data){
         case "Create Employee":
-            createEmployee()
+             createEmployee()
         break;
 
         case "Create Role":
@@ -72,13 +79,22 @@ function choice(data){
         case "Change an Employees Role":
             changeRole()
         break;
+        case "Done":
+            connection.end()
+        break;
     }
 
 }
 
-function createEmployee(){
-    inquirer.prompt(
-        { 
+async function createEmployee(){
+    const roleRows = await connection.query("SELECT * FROM  role")
+
+    const roleList = roleRows.map(role =>{ 
+        return {name: role.title, value: role.id}
+    })
+
+    const {firstName, lastName, roleId} = await inquirer.prompt(
+       [ { 
             type:"input",
             message:"First Name?",
             name:"firstName"
@@ -88,10 +104,21 @@ function createEmployee(){
             message: "Last Name?",
             name: "lastName"
         },
-        //department id
+    {
+       type:"list",
+        message: "What is the employee's Role?",
+        choices:roleList, 
+        name: "roleId"
+    }])
+    //    {
+
+    //     }
+    
         //role id
-    )
-    //insert into database
+        //manager id
+   await connection.query("INSERT INTO employees SET ? ", {
+       firstname: firstName, lastname:lastName, role_id:roleId})
+   initiate()
 }
 
 function createDepartment(){
@@ -103,6 +130,7 @@ function createDepartment(){
         }
     )
     //insert into database
+    initiate()
 }
 
 function createRole(){
@@ -121,11 +149,16 @@ function createRole(){
         //department id
     )
     //insert query
+    initiate()
 }
 
-function viewEmployees(){
+async function viewEmployees(){
     //console.table(employees)
     //look up how to use console.table wiht SQL
+    const employeeRows = await connection.query("SELECT * FROM  employees")
+    console.table(employeeRows)
+   initiate()
+
 }
 
 function viewByDepartment(){
@@ -136,8 +169,7 @@ function viewByDepartment(){
             type: "list",
             message: "" //list of departments from DB
         }
-    )
-    //may need a switch statement 
+    ) 
     //then show all employees from that department
 }
 
@@ -150,13 +182,14 @@ function viewByRole(){
             message: "" //list all roles from DB
         }
     )
-    //made need a switch statement
+    //may need a switch statement
     //then show all employees with that role
 }
 
 function changeRole(){
+    
     inquirer.prompt(
-        {
+        [{
             type: "input",
             message: "What is the first name of the employee?",
             name: "changeFirst" 
@@ -180,7 +213,7 @@ function changeRole(){
             message: "", //list of roles from database
             name: "newRole"
         }
-    )
+    ])
     //using the newRole change the role of the chosen employee in the DB
 }
 
