@@ -186,7 +186,7 @@ async function viewByDepartment(){
         return {name: department.name, value: department.id}
     })
 
-    const{departmentId} = await inquirer.prompt(
+    let {departmentId} = await inquirer.prompt(
         {
             type: "list",
             message: "choose department",
@@ -194,7 +194,15 @@ async function viewByDepartment(){
             name: "departmentId" 
         }
     ) 
-   
+    departmentId = JSON.parse(departmentId)
+
+   let result = await connection.query(
+    "SELECT DISTINCT employees.firstname, employees.lastname FROM ((department INNER JOIN role ON role.department_id = ?) INNER JOIN employees ON employees.role_id = role.id)",
+        departmentId
+    )
+    
+    console.table(result)
+    initiate()
 }
 
 async function viewByRole(){
