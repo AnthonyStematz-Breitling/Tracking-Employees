@@ -92,10 +92,10 @@ async function createEmployee(){
         return {name: role.title, value: role.id}
     })
 
-    const employeeRows = await connection.query("SELECT * FROM  employees WHERE role_id = 1")
+    const managerRows = await connection.query("SELECT * FROM  employees WHERE role_id = 1")
 
-    const employeeList = employeeRows.map(employees =>{ 
-        return {name: employees.firstname + " " + employees.lastname, value: employees.id}
+    const managerList = managerRows.map(managers =>{ 
+        return {name: managers.firstname + " " + managers.lastname, value: managers.id}
     })
 
 
@@ -119,7 +119,7 @@ async function createEmployee(){
     { 
         type:"list",
         message: "Who is thier manager?",
-        choices: employeeList,
+        choices: managerList,
         name: "managerId"
     }
 ])
