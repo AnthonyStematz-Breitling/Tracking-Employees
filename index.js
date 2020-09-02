@@ -52,7 +52,7 @@ const answers = await inquirer.prompt([
 choice(answers.adminFunctions)
 }
 
-//takes users choice and runs appropriate function
+//takes users choice and runs appropriate funcitons
 async function choice(data){
     switch(data){
         case "Create Employee":
@@ -91,11 +91,13 @@ async function choice(data){
 
 async function createEmployee(){
     const roleRows = await connection.query("SELECT * FROM  role")
+
     const roleList = roleRows.map(role =>{ 
         return {name: role.title, value: role.id}
     })
 
-    const managerRows = await connection.query("SELECT * FROM  employees WHERE role_id = 1")\
+    const managerRows = await connection.query("SELECT * FROM  employees WHERE role_id = 1")
+
     const managerList = managerRows.map(managers =>{ 
         return {name: managers.firstname + " " + managers.lastname, value: managers.id}
     })
@@ -144,6 +146,7 @@ async function createDepartment(){
 
 async function createRole(){
     const departmentRows = await connection.query("SELECT * FROM  department")
+
     const departmentList = departmentRows.map(department =>{ 
         return {name: department.name, value: department.id}
     })
@@ -182,6 +185,7 @@ async function viewEmployees(){
 
 async function viewByDepartment(){
     const departmentRows = await connection.query("SELECT * FROM  department")
+
     const departmentList = departmentRows.map(department =>{ 
         return {name: department.name, value: department.id}
     })
@@ -207,6 +211,7 @@ async function viewByDepartment(){
 
 async function viewByRole(){
     const roleRows = await connection.query("SELECT * FROM  role")
+
     const roleList = roleRows.map(role =>{ 
         return {name: role.title, value: role.id}
     })
@@ -232,11 +237,13 @@ async function viewByRole(){
 
 async function changeRole(){
     const roleRows = await connection.query("SELECT * FROM  role")
+
     const roleList = roleRows.map(role =>{ 
         return {name: role.title, value: role.id}
     })
     
     const employeeRows = await connection.query("SELECT * FROM  employees")
+
     const employeeList = employeeRows.map(employees =>{ 
         return {name: employees.firstname + " " + employees.lastname, value: employees.id}
     })
