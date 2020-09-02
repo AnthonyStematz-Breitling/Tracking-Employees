@@ -92,7 +92,7 @@ async function createEmployee(){
         return {name: role.title, value: role.id}
     })
 
-    const employeeRows = await connection.query("SELECT * FROM  employees")
+    const employeeRows = await connection.query("SELECT * FROM  employees WHERE role_id = 1")
 
     const employeeList = employeeRows.map(employees =>{ 
         return {name: employees.firstname + " " + employees.lastname, value: employees.id}
@@ -221,7 +221,6 @@ async function viewByRole(){
     })
     console.table(byRole)
     initiate()
-    //then show all employees with that role
 }
 
 async function changeRole(){
@@ -252,10 +251,8 @@ async function changeRole(){
             name: "newRole"
         }
     ])
-    console.log(newRole)
-    console.log(chosenEmployee)
+
     await connection.query("UPDATE employees SET ? WHERE ?", [{role_id:newRole}, {id:chosenEmployee}])
-    //using the newRole change the role of the chosen employee in the DB
     initiate()
 }
 
