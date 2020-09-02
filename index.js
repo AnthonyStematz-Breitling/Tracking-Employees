@@ -194,7 +194,6 @@ async function viewByDepartment(){
             name: "departmentId" 
         }
     ) 
-    initiate()
    
 }
 
@@ -206,15 +205,22 @@ async function viewByRole(){
     })
    
 
-    const {roleId} = await inquirer.prompt(
-        {
+    let {roleId} = await inquirer.prompt(
+    {
             type: "list",
             message: "pick a role",
             choices: roleList,
             name:"roleId"
         }
     )
-    connection.query("SELECT firstname, lastname FROM employees INNER JOIN role ON employees.role_id = ?", {roleId} )
+    roleId = JSON.parse(roleId)
+    let response = await connection.query("SELECT firstname, lastname FROM employees WHERE role_id=?", roleId)
+   
+    let byRole = await response.map(name =>{ 
+     return {name: name.firstname + " " + name.lastname}
+    })
+    console.table(byRole)
+    initiate()
     //then show all employees with that role
 }
 
@@ -246,7 +252,7 @@ async function changeRole(){
             name: "newRole"
         }
     ])
-    await connection.query("UPDATE employees SET ?", {role_id:newRole})
+    await connection.query("UPDATE employees SET ? WHERE employees.id = ?", {role_id:newRole, id:chosenEmployee})
     //using the newRole change the role of the chosen employee in the DB
     initiate()
 }
