@@ -28,4 +28,3 @@ CREATE TABLE employees(
     FOREIGN KEY (manager_id) REFERENCES employees(id)
 );
 
---look up FOREIGN KEYS for role_id, manager_id, and department_id
