@@ -252,7 +252,9 @@ async function changeRole(){
             name: "newRole"
         }
     ])
-    await connection.query("UPDATE employees SET ? WHERE employees.id = ?", {role_id:newRole, id:chosenEmployee})
+    console.log(newRole)
+    console.log(chosenEmployee)
+    await connection.query("UPDATE employees SET ? WHERE ?", [{role_id:newRole}, {id:chosenEmployee}])
     //using the newRole change the role of the chosen employee in the DB
     initiate()
 }
