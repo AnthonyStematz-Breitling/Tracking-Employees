@@ -33,12 +33,10 @@ const answers = await inquirer.prompt([
         message: "What would you like to do?",
         choices: [
              "Create Employee",
-            //"Delete an Employee",
+            "Delete an Employee",
             "View All Employees",
             "Create Department",
-            //"Delete a Department",
             "Create Role",
-            //"Delete a role",
             "View Employees by Department", 
             "View Employees by Role", 
             "View Employees by Manager",
@@ -89,6 +87,10 @@ async function choice(data){
 
         case "Change an Employees Manager":
             changeManager()
+        break;
+
+        case "Delete an Employee":
+            deleteEmployee()
         break;
 
         case "Done":
@@ -334,6 +336,27 @@ async function changeManager(){
     initiate()
 }
 
+async function deleteEmployee(){
+    const employeeRows = await connection.query("SELECT * FROM  employees")
+
+    const employeeList = employeeRows.map(employees =>{ 
+        return {name: employees.firstname + " " + employees.lastname + " " + employees.id, value: employees.id}
+    })
+
+    const {chosenEmployee} = await inquirer.prompt(
+        
+        {
+            type: "list",
+            message: "choose employee to delete", 
+            choices: employeeList,
+            name: "chosenEmployee"
+        }
+    )
+    await connection.query("DELETE FROM employees WHERE employees.id = ?", chosenEmployee)
+    initiate()
+}
+
+//future development look into creating one or two class functions that could clean up the code
 
 //CRUD
 //Create is going to have a second inquirer prompt 
