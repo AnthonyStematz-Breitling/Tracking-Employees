@@ -302,6 +302,37 @@ async function changeRole(){
     initiate()
 }
 
+async function changeManager(){
+    const managementRows = await connection.query("SELECT * FROM  employees WHERE employees.role_id = 1")
+   
+    const managementList = managementRows.map(manager =>{ 
+        return {name: manager.firstname + " " + manager.lastname, value: manager.id}
+    })
+    
+    const employeeRows = await connection.query("SELECT * FROM  employees")
+
+    const employeeList = employeeRows.map(employees =>{ 
+        return {name: employees.firstname + " " + employees.lastname, value: employees.id}
+    })
+
+    const {chosenEmployee, newManager} = await inquirer.prompt(
+        [
+        {
+            type: "list",
+            message: "choose employee", 
+            choices: employeeList,
+            name: "chosenEmployee"
+        },
+        {
+            type: "list",
+            message: "choose new manager",
+            choices: managementList, 
+            name: "newManager"
+        }
+    ])
+    await connection.query("UPDATE employees SET ? WHERE ?", [{manager_id:newManager}, {id:chosenEmployee}])
+    initiate()
+}
 
 
 //CRUD
