@@ -1,7 +1,7 @@
 # Tracking Employees                 
        
 ## Description
-Command-Line application that functions as a content management system for a business who has multiple departments, roles, and employees to manage. 
+Command-Line application that functions as a content management system for a business who has multiple departments, roles, and employees to manage. Gives administrator ability to create employees, roles, and departments; to view employees by role, department, or manager; and to change an employees role or manager.
 
 ## Table of Contents
  * [Installation](#installation)
