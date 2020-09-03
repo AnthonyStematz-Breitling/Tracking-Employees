@@ -41,9 +41,9 @@ const answers = await inquirer.prompt([
             //"Delete a role",
             "View Employees by Department", 
             "View Employees by Role", 
-            //"View Employees by Manager",
+            "View Employees by Manager",
             "Change an Employees Role" ,
-            //"Change an Employees Manager",
+            "Change an Employees Manager",
             "Done" 
         ]
     }
@@ -79,9 +79,18 @@ async function choice(data){
             viewByRole()
         break;
 
+        case "View Employees by Manager":
+            viewByManager()
+        break;
+
         case "Change an Employees Role":
             changeRole()
         break;
+
+        case "Change an Employees Manager":
+            changeManager()
+        break;
+
         case "Done":
             connection.end()
         break;
@@ -235,6 +244,31 @@ async function viewByRole(){
     initiate()
 }
 
+async function viewByManager(){
+    const managementRows = await connection.query("SELECT * FROM  employees WHERE employees.role_id = 1")
+   
+    const managementList = managementRows.map(manager =>{ 
+        return {name: manager.firstname + " " + manager.lastname, value: manager.id}
+    })
+    
+
+    let {chosenManager} = await inquirer.prompt(
+        {
+            type: "list",
+            message: "choose manager",
+            choices:managementList,
+            name: "chosenManager"
+        }
+    )
+    JSON.parse(chosenManager)
+    let response = await connection.query("SELECT * FROM employees WHERE employees.manager_id = ?", chosenManager )
+    let byManager = await response.map(name =>{ 
+        return {name: name.firstname + " " + name.lastname}
+       })
+       console.table(byManager)
+       initiate()
+}
+
 async function changeRole(){
     const roleRows = await connection.query("SELECT * FROM  role")
 
@@ -267,6 +301,7 @@ async function changeRole(){
     await connection.query("UPDATE employees SET ? WHERE ?", [{role_id:newRole}, {id:chosenEmployee}])
     initiate()
 }
+
 
 
 //CRUD
