@@ -7,13 +7,10 @@ var mysql = require("mysql");
 //connects to database
 var connection = mysql.createConnection({
     host: "localhost",
-  
     port: 3306,
-  
     user: "root",
-  
-    password: "MyNewPass",
-    database: "work_force_db"
+    password:"MyNewPass",
+    database:"work_force_db"
   });
   
   //promisifies query off of connection
@@ -32,7 +29,7 @@ const answers = await inquirer.prompt([
         name: "adminFunctions",
         message: "What would you like to do?",
         choices: [
-             "Create Employee",
+            "Create Employee",
             "Delete an Employee",
             "View All Employees",
             "Create Department",
@@ -108,7 +105,7 @@ async function createEmployee(){
     })
 
     const managerRows = await connection.query("SELECT * FROM  employees WHERE role_id = 1")
-
+  
     const managerList = managerRows.map(managers =>{ 
         return {name: managers.firstname + " " + managers.lastname, value: managers.id}
     })
@@ -193,13 +190,16 @@ async function viewEmployees(){
    initiate()
 
 }
-
+function mapping(whatToMap){
+    const hasBeenMapped = whatToMap.map(department =>{ 
+        return {name: department.name, value: department.id}
+    })
+    return hasBeenMapped
+}
 async function viewByDepartment(){
     const departmentRows = await connection.query("SELECT * FROM  department")
 
-    const departmentList = departmentRows.map(department =>{ 
-        return {name: department.name, value: department.id}
-    })
+    const departmentList = await mapping(departmentRows)
 
     let {departmentId} = await inquirer.prompt(
         {
