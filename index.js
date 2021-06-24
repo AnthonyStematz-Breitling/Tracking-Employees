@@ -20,8 +20,6 @@ connection.connect(function (err) {
     initiate()
 });
 
-
-
 async function initiate() {
     const answers = await inquirer.prompt([
         {
@@ -67,23 +65,23 @@ async function choice(data) {
             break;
 
         case "View Employees by Department":
-            viewByDepartment()
+            viewBy("department")
             break;
 
         case "View Employees by Role":
-            viewByRole()
+            viewBy("role")
             break;
 
         case "View Employees by Manager":
-            viewByManager()
+            viewBy("manager")
             break;
 
         case "Change an Employees Role":
-            changeRole()
+            updateEmployee("role")
             break;
 
         case "Change an Employees Manager":
-            changeManager()
+           updateEmployee("manager")
             break;
 
         case "Delete an Employee":
@@ -202,76 +200,33 @@ async function viewEmployees() {
     initiate()
 }
 
-
-
-async function viewByDepartment() {
-    const departmentList = await mapping("department")
-
-    let { departmentId } = await inquirer.prompt(
+async function viewBy(choice){
+    const list = await mapping(choice)
+    let { referanceId } = await inquirer.prompt(
         {
             type: "list",
-            message: "choose department",
-            choices: departmentList,
-            name: "departmentId"
+            message: "choose " + choice,
+            choices: list,
+            name: "referanceId"
         }
     )
-    departmentId = JSON.parse(departmentId)
-
-    let result = await connection.query(
-        "SELECT DISTINCT employees.firstname, employees.lastname FROM ((department INNER JOIN role ON role.department_id = ?) INNER JOIN employees ON employees.role_id = role.id)",
-        departmentId
-    )
-
-    console.table(result)
+    referanceId = JSON.parse(referanceId)
+    let query;
+    if(choice === "department"){
+        query =  "SELECT DISTINCT employees.firstname, employees.lastname FROM ((department INNER JOIN role ON role.department_id = " + referanceId + ") INNER JOIN employees ON employees.role_id = role.id)"
+    }
+    else{
+        query = "SELECT firstname, lastname FROM employees WHERE "  + choice + "_id=" + referanceId 
+    }
+    let response = await connection.query(query)
+    console.table(response)
     initiate()
 }
 
-async function viewByRole() {
-    const roleList = await mapping("role") 
-
-    let { roleId } = await inquirer.prompt(
-        {
-            type: "list",
-            message: "pick a role",
-            choices: roleList,
-            name: "roleId"
-        }
-    )
-    roleId = JSON.parse(roleId)
-    let response = await connection.query("SELECT firstname, lastname FROM employees WHERE role_id=?", roleId)
-
-    let byRole = await response.map(name => {
-        return { name: name.firstname + " " + name.lastname }
-    })
-    console.table(byRole)
-    initiate()
-}
-
-async function viewByManager() {
-    const managementList = await mapping("manager") 
-
-    let { chosenManager } = await inquirer.prompt(
-        {
-            type: "list",
-            message: "choose manager",
-            choices: managementList,
-            name: "chosenManager"
-        }
-    )
-    JSON.parse(chosenManager)
-    let response = await connection.query("SELECT * FROM employees WHERE employees.manager_id = ?", chosenManager)
-    let byManager = await response.map(name => {
-        return { name: name.firstname + " " + name.lastname }
-    })
-    console.table(byManager)
-    initiate()
-}
-
-async function changeRole() {
-    const roleList = await mapping("role") 
+async function updateEmployee(choice){
+    const choiceList = await mapping(choice)
     const employeeList = await mapping("employees")
-
-    const { chosenEmployee, newRole } = await inquirer.prompt(
+    const { chosenEmployee, newReferanceId } = await inquirer.prompt(
         [
             {
                 type: "list",
@@ -281,37 +236,15 @@ async function changeRole() {
             },
             {
                 type: "list",
-                message: "choose new role",
-                choices: roleList,
-                name: "newRole"
+                message: "choose new " + choice,
+                choices: choiceList,
+                name: "newReferanceId"
             }
         ])
-
-    await connection.query("UPDATE employees SET ? WHERE ?", [{ role_id: newRole }, { id: chosenEmployee }])
-    initiate()
-}
-
-async function changeManager() {
-    const managementList = await mapping("manager") 
-    const employeeList = await mapping("employees")
-
-    const { chosenEmployee, newManager } = await inquirer.prompt(
-        [
-            {
-                type: "list",
-                message: "choose employee",
-                choices: employeeList,
-                name: "chosenEmployee"
-            },
-            {
-                type: "list",
-                message: "choose new manager",
-                choices: managementList,
-                name: "newManager"
-            }
-        ])
-    await connection.query("UPDATE employees SET ? WHERE ?", [{ manager_id: newManager }, { id: chosenEmployee }])
-    initiate()
+        let query = "UPDATE employees SET " + choice + "_id = " + newReferanceId + " WHERE id = " + chosenEmployee
+        console.log(query)
+        await connection.query(query)
+        initiate()
 }
 
 async function deleteEmployee() {
